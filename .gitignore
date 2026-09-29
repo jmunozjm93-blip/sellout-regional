@@ -1,0 +1,24 @@
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+.claude/
+
+# Temporales
+*.tmp
+*.log
+~$*
+
+# Excel de clientes y facturación: se quedan en el PC, no en GitHub
+*.xlsx
+fuentes/
+
+# Versión offline (un solo HTML con todo adentro) y su generador: uso local
+Sell Out Regional.html
+GENERAR.bat
+motor/
+LEEME.md

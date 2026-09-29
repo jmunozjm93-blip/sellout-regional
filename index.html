@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sell Out Regional</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --ink:#1c2333; --muted:#6b7488;
+  --accent:#1a56db; --accent2:#0e9f6e; --warn:#d97706; --bad:#dc2626;
+  --line:#e4e8f0; --head:#eef2f8;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); font-size:14px}
+header{background:#fff; border-bottom:1px solid var(--line); padding:12px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+header h1{font-size:19px; font-weight:800; letter-spacing:.2px}
+header .sub{font-size:12.5px; color:var(--muted); flex:1}
+header a.btn{text-decoration:none}
+main{padding:18px 24px; max-width:100%}
+.filters{display:flex; flex-wrap:wrap; gap:10px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:14px; align-items:flex-end; position:sticky; top:0; z-index:45; box-shadow:0 4px 12px rgba(20,30,60,.08)}
+.filters label{font-size:11px; color:var(--muted); font-weight:700; display:block; margin-bottom:2px}
+.filters select,.filters input{padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; min-width:140px}
+.filters input{min-width:220px}
+.btn{display:inline-block; padding:7px 14px; border:none; border-radius:6px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; font-size:13px}
+.btn.ghost{background:#eef2f8; color:var(--ink)}
+.btn:disabled{opacity:.6; cursor:wait}
+.kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px}
+.kpi{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; box-shadow:0 1px 2px rgba(20,30,60,.05)}
+.kpi .lbl{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); font-weight:600}
+.kpi .val{font-size:21px; font-weight:800; margin-top:3px; font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11px; color:var(--muted); margin-top:2px}
+.aviso{background:#fff8eb; border:1px solid #f6d9a8; border-left:4px solid var(--warn); border-radius:8px; padding:10px 14px; font-size:12.8px; color:#6b4a12; margin-bottom:14px; line-height:1.45}
+.aviso b{color:#4a3208}
+.ftbl td,.ftbl th{position:static; cursor:default}
+.tblwrap{background:var(--card); border:1px solid var(--line); border-radius:10px}
+.tblbar{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--line); flex-wrap:wrap; gap:8px}
+.tblbar h3{font-size:13.5px}
+.tblbar .cnt{font-size:12px; color:var(--muted)}
+.scroll{overflow:auto; max-height:72vh}
+table{border-collapse:collapse; width:100%}
+th{background:var(--head); font-size:11px; text-transform:uppercase; letter-spacing:.3px; color:#3d4a63; padding:8px 9px; text-align:left; position:sticky; top:0; cursor:pointer; user-select:none; white-space:nowrap; border-bottom:2px solid var(--line); z-index:5}
+th.sorted-asc::after{content:" ▲"; font-size:9px} th.sorted-desc::after{content:" ▼"; font-size:9px}
+th.num,td.num{text-align:right}
+td{padding:6px 9px; border-bottom:1px solid var(--line); white-space:nowrap; font-size:12.5px; font-variant-numeric:tabular-nums}
+#tbl tbody tr:hover td{background:#f8faff}
+tr.tot td{background:#f1f4fa; font-weight:800; position:sticky; top:35px; z-index:4; border-bottom:2px solid var(--line)}
+.stick1,.stick2{position:sticky; background:var(--card); z-index:3}
+.stick1{left:0; min-width:120px} .stick2{left:120px}
+th.stick1,th.stick2{z-index:16; background:var(--head)}
+tr.tot td.stick1,tr.tot td.stick2{z-index:15; background:#f1f4fa}
+.mc{font-weight:800}
+.ph{width:46px; height:46px; object-fit:contain; background:#fff; border:1px solid var(--line); border-radius:6px; display:block; cursor:zoom-in}
+.ph-none{width:46px; height:46px; display:flex; align-items:center; justify-content:center; border:1px dashed var(--line); border-radius:6px; color:#b7bfcf; font-size:18px}
+.chip{display:inline-block; border-radius:10px; padding:1px 8px; font-size:10.5px; font-weight:800; letter-spacing:.2px}
+.st{background:#e1f0e8; color:#0e6e4c; font-size:10px; padding:1px 7px; border-radius:4px; font-weight:700}
+.st.out{background:#fdeaea; color:var(--bad)}
+.neg{color:var(--bad); font-weight:600}
+.pos{color:var(--accent2); font-weight:600}
+.dim{color:#a3abbb}
+.good{background:#e1f0e8; color:#0e6e4c; font-weight:600}
+.bad{background:#fdeaea; color:var(--bad); font-weight:600}
+.e-CONVENTA{background:#e1f0e8; color:#0e6e4c}
+.e-AGOTADO{background:#d9f2e6; color:#05603a}
+.e-SINVENTA{background:#f1f3f7; color:#6b7488}
+.e-REPUESTO{background:#fff1d6; color:#9a5b00}
+.e-NUEVO{background:#e3ecff; color:#1a4fc4}
+.vacio{padding:40px; text-align:center; color:var(--muted)}
+footer{text-align:center; color:var(--muted); font-size:11.5px; padding:14px; line-height:1.6}
+#zoom{position:fixed; inset:0; background:rgba(15,20,35,.6); display:none; align-items:center; justify-content:center; z-index:100}
+#zoom img{max-width:min(520px,90vw); max-height:80vh; background:#fff; border-radius:12px; padding:12px}
+@media (max-width:700px){ main{padding:12px} header{padding:12px} .filters input{min-width:0; width:100%} }
+</style>
+</head>
+<body>
+<script src="js/acceso.js"></script>
+<header>
+  <h1>Sell Out Regional</h1>
+  <span class="sub" id="sub">Cargando datos…</span>
+  <a class="btn" href="cargar.html">⬆ Cargar archivos</a>
+</header>
+<main>
+  <div class="filters">
+    <div><label>Cliente</label><select id="fCli"></select></div>
+    <div><label>Período</label><select id="fPer"></select></div>
+    <div><label>Marca</label><select id="fMarca"></select></div>
+    <div><label>Estado</label><select id="fEst"></select></div>
+    <div><label>Buscar (varios con coma)</label><input id="fQ" placeholder="M9160C, LIFT, 82291U"></div>
+    <div title="Días entre la factura y que el producto aparece en el stock del cliente"><label>Tránsito (días)</label><input id="fTr" type="number" min="0" max="60" value="7" style="min-width:0;width:80px"></div>
+    <button class="btn ghost" id="bReset">Limpiar</button>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+  <div class="aviso" id="aviso"></div>
+
+  <div class="tblwrap" style="margin-bottom:14px">
+    <div class="tblbar"><h3>Estatus de facturación · calzado</h3><span class="cnt" id="factInfo"></span></div>
+    <div style="overflow:auto"><table class="ftbl"><thead><tr>
+      <th>Cliente</th><th class="num">Facturado (pares)</th><th class="num">Notas de crédito</th><th class="num">Neto (pares)</th><th class="num">Neto $</th>
+      <th>Primera factura</th><th>Última factura</th><th>Última foto stock</th><th class="num">Stock última foto</th><th class="num" title="Facturado que todavía no debería verse en la última foto de stock">Facturado después de la foto</th>
+    </tr></thead><tbody id="factBody"></tbody></table></div>
+  </div>
+
+  <div class="tblwrap">
+    <div class="tblbar">
+      <h3>Detalle por modelo · Calzado</h3>
+      <span class="cnt" id="cnt"></span>
+      <button class="btn" id="bXls">⬇ Descargar Excel</button>
+    </div>
+    <div class="scroll"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+  </div>
+</main>
+<footer id="foot"></footer>
+<div id="zoom" onclick="this.style.display='none'"><img alt=""></div>
+
+<script>
+const IVA = 1.19, DIAS_MES = 30.44;
+const ROT_MES_OK = 0.30, MESES_OK = 4, MARGEN_OK = 0.25;
+const CLI_COLOR = {'CASA ANNY':'#7c3aed', 'COMERCIAL NACE':'#0891b2', 'MULTIHOGAR':'#ea580c'};
+const PALETA = ['#0e9f6e','#a855f7','#dc2626','#14224a','#1a56db','#d97706'];
+
+const $ = id => document.getElementById(id);
+const fmtN = n => n==null||!isFinite(n) ? '–' : Math.round(n).toLocaleString('es-CL');
+const fmt$ = n => n==null||!isFinite(n) ? '–' : '$'+Math.round(n).toLocaleString('es-CL');
+const fmtP = n => n==null||!isFinite(n) ? '–' : (n*100).toFixed(1)+'%';
+const fmtM = n => n==null ? '–' : !isFinite(n) ? 'sin venta' : n.toLocaleString('es-CL',{minimumFractionDigits:1,maximumFractionDigits:1});
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const N = v => { if (v==null || v==='') return null; const n = typeof v==='number' ? v : parseFloat(v); return isFinite(n) ? n : null; };
+const toDate = f => { const [d,m,y] = f.split('-').map(Number); return new Date(y, m-1, d); };
+const isoDeFecha = f => { const [d,m,y] = f.split('-'); return `${y}-${m}-${d}`; };
+const fechaDeIso = s => { const [y,m,d] = s.split('-'); return `${d}-${m}-${y}`; };
+const sumaDias = (iso, n) => { const d = new Date(iso+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+function cliColor(c){ if(!CLI_COLOR[c]) CLI_COLOR[c] = PALETA[Object.keys(CLI_COLOR).length % PALETA.length]; return CLI_COLOR[c]; }
+
+// ---------- datos publicados (data/) ----------
+let MAN = {archivos:{}}, STOCK = [], FACT = null, CAT = {}, IMG = {};
+const imgURL = (mc,sz) => IMG[mc] ? `https://drive.google.com/thumbnail?id=${IMG[mc]}&sz=w${sz||120}` : '';
+async function getJSON(path, def){
+  try { const r = await fetch(path + (path.includes('?')?'&':'?') + 'v=' + encodeURIComponent(MAN.actualizado || Date.now()), {cache:'no-cache'}); return r.ok ? await r.json() : def; }
+  catch(e){ return def; }
+}
+async function cargarDatos(){
+  const r = await fetch('data/manifiesto.json?t=' + Date.now(), {cache:'no-store'});
+  MAN = r.ok ? await r.json() : {archivos:{}};
+  const arch = Object.values(MAN.archivos || {});
+  const [stock, fact, cat, img] = await Promise.all([
+    Promise.all(arch.map(a => getJSON(a.path, null))),
+    MAN.facturacion ? getJSON('data/facturacion.json', null) : null,
+    getJSON('data/catalogo.json', {}),
+    getJSON('data/imagenes.json', {}),
+  ]);
+  STOCK = stock.filter(Boolean);
+  CAT = cat || {}; IMG = img || {};
+  FACT = fact ? {nombre: fact.nombre, hasta: fact.hasta, rows: fact.rows.map(x => ({card: fact.cards[x[0]], f: x[1], mc: x[2], q: x[3], neto: x[4], td: x[5]}))} : null;
+}
+
+// ---------- calculo ----------
+let D = {clientes:[], periodos:[], status:[], fact:null};
+// Tarjeta de facturacion -> cliente del dashboard (CENTRO COMERCIAL CASA ANNY LTDA. -> CASA ANNY)
+function clienteDeCard(card, clientes){
+  return clientes.find(c => card.includes(c) || card.includes(c.replace(/^(CENTRO COMERCIAL|COMERCIAL|DISTRIBUIDORA)\s+/,'')));
+}
+// Clientes que informan sin codigo de color: se toma el color facturado a ese cliente, o el unico del catalogo
+function resolverColores(items, factCli){
+  const out = {};
+  Object.entries(items).forEach(([raw,it])=>{
+    let mc = raw;
+    if (it.needColor){
+      const pref = it.mo+'-';
+      let cand = [...new Set(factCli.filter(x=>x.mc.startsWith(pref) && x.q>0).map(x=>x.mc))];
+      if (cand.length!==1){ const cc = Object.keys(CAT).filter(k=>k.startsWith(pref)); if (cc.length===1) cand = cc; }
+      mc = cand.length===1 ? cand[0] : it.mo+' '+it.colName;
+    }
+    const o = out[mc] || (out[mc] = {...it, st:0, vi:it.vi!=null?0:null});
+    o.st += it.st; if (it.vi!=null) o.vi = (o.vi||0) + it.vi;
+  });
+  return out;
+}
+function construir(){
+  const tr = Math.max(0, +$('fTr').value || 0);
+  const porCli = {};
+  STOCK.forEach(s=>(porCli[s.cli] ||= []).push(s));
+  const clientes = Object.keys(porCli).sort();
+  const factPor = {};
+  if (FACT) FACT.rows.forEach(x=>{ const c = clienteDeCard(x.card, clientes); if (c) (factPor[c] ||= []).push(x); });
+  const periodos = [], status = [];
+  clientes.forEach(cli=>{
+    const fc = factPor[cli] || [];
+    const snaps = porCli[cli].map(s=>({...s, items: resolverColores(s.items, fc)})).sort((a,b)=>toDate(a.fecha)-toDate(b.fecha));
+    const precio={}, costo={}, marca={};
+    snaps.forEach(s=>Object.entries(s.items).forEach(([k,it])=>{ if(it.precio) precio[k]=it.precio; if(it.costo) costo[k]=it.costo; if(it.marca) marca[k]=it.marca; }));
+    // costo del cliente = nuestro precio neto facturado (promedio ponderado de las facturas)
+    const fq={}, fn={}, fAnio={};
+    fc.forEach(x=>{ fAnio[x.mc]=(fAnio[x.mc]||0)+x.q; if (x.td==='FAC' && x.q>0){ fq[x.mc]=(fq[x.mc]||0)+x.q; fn[x.mc]=(fn[x.mc]||0)+x.neto; } });
+    const costoFac = k => fq[k] ? fn[k]/fq[k] : null;
+    const factEntre = (lo, hi) => { const m={}; fc.forEach(x=>{ if (x.f>=lo && x.f<hi) m[x.mc]=(m[x.mc]||0)+x.q; }); return m; };
+
+    for (let p=1;p<snaps.length;p++){
+      const a=snaps[p-1], b=snaps[p], dias=Math.round((toDate(b.fecha)-toDate(a.fecha))/864e5);
+      const lo = sumaDias(isoDeFecha(a.fecha), -tr), hi = sumaDias(isoDeFecha(b.fecha), -tr);
+      const fPer = FACT ? factEntre(lo, hi) : null;
+      const rows=[];
+      new Set([...Object.keys(a.items), ...Object.keys(b.items)]).forEach(k=>{
+        const ia=a.items[k], ib=b.items[k];
+        const sa = ia ? ia.st : null, sc = ib ? ib.st : 0;
+        let ing = null;
+        if (fPer) ing = fPer[k] || 0;
+        else if (ia && ib && ia.compra!=null && ib.compra!=null) ing = ib.compra - ia.compra;
+        else if (!ia && ib && ib.compra!=null) ing = ib.compra;
+        if (!sa && !sc && !ing) return;                 // sin movimiento
+        let v=null, rep=0, est='CON VENTA';
+        if (sa==null && !ing){ est='NUEVO'; rep=sc; }
+        else {
+          v = (sa||0) + (ing||0) - sc;
+          if (v<0){ est='REPUESTO'; rep=-v; v=null; }
+          else if (v===0) est='SIN VENTA';
+          else if (sc===0) est='AGOTADO';
+        }
+        const src = ib || ia, c = CAT[k] || [];
+        let mk = c[5] || marca[k] || src.marca || '';
+        if (!mk) mk = /UMBRO/i.test(src.d) ? 'UMBRO' : /FILA/i.test(src.d) ? 'FILA' : /C$/.test(src.mo) ? 'CONVERSE' : '';
+        rows.push({mc:k, d:src.d, sa, ing, sc, v, rep, est, p: precio[k] || N(c[6]), k: costo[k] || costoFac(k), mk,
+                   fy: FACT ? (fAnio[k]||0) : null, vi: ib && ib.vi!=null ? ib.vi : null});
+      });
+      periodos.push({cli, desde:a.fecha, hasta:b.fecha, dias, conIng: rows.some(r=>r.ing!=null), conFact: !!FACT, rows});
+    }
+    // estatus de facturacion del cliente
+    const ult = snaps[snaps.length-1], hiUlt = sumaDias(isoDeFecha(ult.fecha), -tr);
+    const sum = (arr, f) => arr.reduce((s,x)=>s+f(x),0);
+    const fac = fc.filter(x=>x.td==='FAC'), nc = fc.filter(x=>x.td!=='FAC');
+    status.push({cli, fotos: snaps.length, ultFoto: ult.fecha, stockUlt: sum(Object.values(ult.items), x=>x.st),
+      facPares: sum(fac,x=>x.q), ncPares: sum(nc,x=>x.q), netoPares: sum(fc,x=>x.q), neto$: sum(fc,x=>x.neto),
+      ultFac: fac.length ? fechaDeIso(fac.reduce((m,x)=>x.f>m?x.f:m,'')) : null, primFac: fac.length ? fechaDeIso(fac.reduce((m,x)=>x.f<m?x.f:m,'9')) : null,
+      despues: sum(fc.filter(x=>x.f>=hiUlt), x=>x.q)});
+  });
+  D = {clientes, periodos, status, fact: FACT ? {name:FACT.nombre, hasta:FACT.hasta} : null, porCli};
+  D.periodos.forEach((p,i)=>{
+    p.i=i; p.meses=p.dias/DIAS_MES; p.label=`${p.cli} · ${p.desde} → ${p.hasta} (${p.dias} días)`;
+    p.rows.forEach(r=>{
+      const c = CAT[r.mc] || [];
+      r.cli=p.cli; r.per=p;
+      r.desc = c[0] || r.d; r.status=c[1]||''; r.dur=c[2]||''; r.temp=c[3]||''; r.gen=c[4]||'';
+      r.marca = r.mk; r.fp = c[6]!=null ? N(c[6]) : r.p; r.bo=N(c[7]); r.kam=N(c[8]); r.reg=N(c[9]);
+      r.ini = r.sa==null && r.ing==null ? null : (r.sa||0)+(r.ing||0);
+      r.vn  = r.v!=null && r.p ? r.v*r.p/IVA : null;
+      r.mg  = r.p && r.k ? (r.p/IVA - r.k)/(r.p/IVA) : null;
+      r.rot = r.v!=null && r.ini>0 ? r.v/r.ini : null;
+      r.vm  = r.v!=null ? r.v/p.meses : null;
+      r.mst = r.v==null ? null : r.v>0 ? r.sc/r.vm : (r.sc>0 ? Infinity : null);
+    });
+  });
+}
+
+// ---------- filtros ----------
+function opts(sel, list, all){ const v=sel.value; sel.innerHTML = (all?`<option value="">${all}</option>`:'') + list.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join(''); if ([...sel.options].some(o=>o.value===v)) sel.value=v; }
+function fillPer(){
+  const cli=$('fCli').value, v=$('fPer').value;
+  $('fPer').innerHTML = `<option value="last">Último período de cada cliente</option>` + D.periodos.filter(p=>!cli||p.cli===cli).map(p=>`<option value="${p.i}">${esc(p.label)}</option>`).join('');
+  if ([...$('fPer').options].some(o=>o.value===v)) $('fPer').value=v;
+}
+function periodosSel(){
+  const cli=$('fCli').value, per=$('fPer').value;
+  if (per!=='last' && D.periodos[+per]) return [D.periodos[+per]];
+  const last={}; D.periodos.forEach(p=>{ if(!cli||p.cli===cli) last[p.cli]=p; }); return Object.values(last);
+}
+function filasSel(){
+  const marca=$('fMarca').value, est=$('fEst').value;
+  const qs=$('fQ').value.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+  return periodosSel().flatMap(p=>p.rows).filter(r=>
+    (!marca||r.marca===marca) && (!est||r.est===est) &&
+    (!qs.length || qs.some(q=>r.mc.includes(q) || String(r.desc).toUpperCase().includes(q))));
+}
+
+// ---------- columnas ----------
+const vtaTip = r => r.vi!=null ? `title="El cliente informa ${r.vi} UN vendidas"` : '';
+const COLS = [
+  {k:'mc', h:'Modelo', cls:'stick1', td:r=>`<span class="mc">${esc(r.mc)}</span>`, x:r=>r.mc},
+  {k:'_ph', h:'Foto', cls:'stick2', nosort:1, td:r=> IMG[r.mc] ? `<img class="ph" loading="lazy" src="${imgURL(r.mc)}" onerror="this.outerHTML='<div class=ph-none>👟</div>'" onclick="zoom('${esc(r.mc)}')" alt="">` : `<div class="ph-none">👟</div>`},
+  {k:'desc', h:'Descripción', td:r=>esc(r.desc), x:r=>r.desc},
+  {k:'cli', h:'Retail', td:r=>`<span class="chip" style="background:${cliColor(r.cli)};color:#fff">${esc(r.cli)}</span>`, x:r=>r.cli},
+  {k:'status', h:'Status', td:r=> r.status ? `<span class="st ${r.status!=='IN LINE'?'out':''}">${esc(r.status)}</span>` : '<span class="dim">–</span>', x:r=>r.status},
+  {k:'dur', h:'Duración', td:r=>esc(r.dur)||'<span class="dim">–</span>', x:r=>r.dur},
+  {k:'temp', h:'Temporada', td:r=>esc(r.temp)||'<span class="dim">–</span>', x:r=>r.temp},
+  {k:'gen', h:'Género', td:r=>esc(r.gen)||'<span class="dim">–</span>', x:r=>r.gen},
+  {k:'marca', h:'Marca', td:r=>esc(r.marca), x:r=>r.marca},
+  {k:'fp', h:'Full price', n:1, td:r=>fmt$(r.fp), x:r=>r.fp, fmt:'$'},
+  {k:'bo', h:'BO02', n:1, td:r=>fmtN(r.bo), x:r=>r.bo},
+  {k:'kam', h:'KAM', n:1, td:r=>fmtN(r.kam), x:r=>r.kam},
+  {k:'reg', h:'Regionales', n:1, td:r=>fmtN(r.reg), x:r=>r.reg},
+  {k:'sa', h:'Stock anterior', n:1, td:r=>fmtN(r.sa), x:r=>r.sa, tot:'sa'},
+  {k:'ing', h:'Facturado período', n:1, td:r=> r.ing!=null ? fmtN(r.ing) : '<span class="dim">s/d</span>', x:r=>r.ing, tot:'ing'},
+  {k:'fy', h:'Fact. año', n:1, td:r=> r.fy!=null ? fmtN(r.fy) : '<span class="dim">s/d</span>', x:r=>r.fy, tot:'fy'},
+  {k:'v', h:'Vta UN', n:1, td:r=> r.v==null ? `<span class="dim" ${vtaTip(r)}>–</span>` : `<span class="${r.v>0?'pos':''}" style="font-weight:800" ${vtaTip(r)}>${fmtN(r.v)}</span>`, x:r=>r.v, tot:'v'},
+  {k:'mg', h:'Margen', n:1, td:r=>`<span class="${r.mg==null?'dim':r.mg>=MARGEN_OK?'pos':'neg'}">${fmtP(r.mg)}</span>`, x:r=>r.mg, fmt:'%', tot:'mg'},
+  {k:'rot', h:'Rotación', n:1, td:r=>`<span class="${r.rot==null?'dim':r.rot/r.per.meses>=ROT_MES_OK?'pos':'neg'}" title="${r.rot==null?'':'Mensual: '+fmtP(r.rot/r.per.meses)}">${fmtP(r.rot)}</span>`, x:r=>r.rot, fmt:'%', tot:'rot'},
+  {k:'sc', h:'Stock UN', n:1, td:r=>fmtN(r.sc), x:r=>r.sc, tot:'sc'},
+  {k:'mst', h:'Meses stock', n:1, cell:r=> r.mst==null ? '' : r.mst<=MESES_OK ? 'good' : 'bad', td:r=>fmtM(r.mst), x:r=>isFinite(r.mst)?r.mst:null, fmt:'0.0', tot:'mst'},
+  {k:'vn', h:'Venta $', n:1, td:r=>`<span class="${r.vn>0?'pos':''}">${fmt$(r.vn)}</span>`, x:r=>r.vn, fmt:'$', tot:'vn'},
+  {k:'est', h:'Estado', td:r=>`<span class="chip e-${r.est.replace(/ /g,'')}">${r.est}${r.rep?' +'+fmtN(r.rep):''}</span>`, x:r=>r.est+(r.rep?' +'+r.rep:'')},
+];
+
+// nunca se promedian %: se suman absolutos y se divide
+function totales(rows){
+  const cv = rows.filter(r=>r.v!=null);
+  const s = f => rows.reduce((a,r)=>a+(r[f]||0),0), sv = f => cv.reduce((a,r)=>a+(r[f]||0),0);
+  const conMg = cv.filter(r=>r.mg!=null && r.vn), vnMg = conMg.reduce((a,r)=>a+r.vn,0);
+  const nuevos = rows.filter(r=>r.est==='NUEVO'), rep = rows.filter(r=>r.est==='REPUESTO');
+  const t = { sa:s('sa'), ing: rows.some(r=>r.ing!=null) ? s('ing') : null, fy: rows.some(r=>r.fy!=null) ? s('fy') : null, sc:s('sc'),
+    v:sv('v'), vn:sv('vn'), vm:sv('vm'), ini:sv('ini'), scv:sv('sc'),
+    nRep:rep.length, rep:rep.reduce((a,r)=>a+r.rep,0), nNuevo:nuevos.length, repN:nuevos.reduce((a,r)=>a+r.rep,0), n:rows.length, nCalc:cv.length };
+  t.mg = vnMg ? conMg.reduce((a,r)=>a+r.mg*r.vn,0)/vnMg : null;
+  t.rot = t.ini ? t.v/t.ini : null; t.rotMes = t.ini ? t.vm/t.ini : null; t.mst = t.vm ? t.scv/t.vm : null;
+  return t;
+}
+
+let sortK='v', sortDir=-1;
+function render(){
+  const ps = periodosSel(), rows = filasSel(), t = totales(rows);
+  $('sub').textContent = ps.length ? ps.map(p=>p.label).join('  |  ') : '';
+  renderFact();
+  if (!D.periodos.length){
+    const solos = Object.entries(D.porCli||{}).filter(([c,a])=>a.length<2).map(([c])=>c);
+    $('kpis').innerHTML=''; $('aviso').innerHTML=`Se necesitan <b>dos fotos de stock</b> del mismo cliente para calcular la venta.${solos.length?` Con una sola foto: ${solos.map(esc).join(', ')}.`:''} Súbelas en <a href="cargar.html">Cargar archivos</a>.`;
+    $('tbl').tHead.innerHTML=''; $('tbl').tBodies[0].innerHTML='<tr><td class="vacio">Sin períodos todavía</td></tr>'; $('cnt').textContent=''; window._rows=[]; return;
+  }
+  $('kpis').innerHTML = [
+    ['Venta UN', fmtN(t.v), `${t.nCalc} de ${t.n} modelos con venta calculable`],
+    ['Venta $ neta', fmt$(t.vn), 'a precio lista, sin IVA'],
+    ['Margen', `<span class="${t.mg==null?'':t.mg>=MARGEN_OK?'pos':'neg'}">${fmtP(t.mg)}</span>`, 'ponderado por venta neta'],
+    ['Rotación', `<span class="${t.rotMes==null?'':t.rotMes>=ROT_MES_OK?'pos':'neg'}">${fmtP(t.rot)}</span>`, `del período · ${fmtP(t.rotMes)} mensual`],
+    ['Stock actual', fmtN(t.sc), `antes ${fmtN(t.sa)} UN`],
+    ['Meses de stock', `<span class="${t.mst==null?'':t.mst<=MESES_OK?'pos':'neg'}">${fmtM(t.mst)}</span>`, 'stock ÷ venta mensual'],
+    ['Facturado período', t.ing!=null ? fmtN(t.ing) : '–', t.ing!=null ? `año: ${fmtN(t.fy)} pares en estos modelos` : 'falta la facturación'],
+    ['Repuestos', `${t.nRep} <span style="font-size:13px;color:var(--muted)">+${fmtN(t.rep)} UN</span>`, ps.some(p=>p.conFact) ? 'stock subió más de lo facturado' : 'subió el stock: venta no calculable'],
+    ['Nuevos', `${t.nNuevo} <span style="font-size:13px;color:var(--muted)">+${fmtN(t.repN)} UN</span>`, 'no estaban en la foto anterior'],
+  ].map(([l,v,n])=>`<div class="kpi"><div class="lbl">${l}</div><div class="val">${v}</div><div class="note">${n}</div></div>`).join('');
+
+  const sinIng = ps.filter(p=>!p.conIng), tr = +$('fTr').value || 0;
+  $('aviso').innerHTML = `<b>Cómo se calcula la venta:</b> stock anterior + facturado en el período − stock actual. ` + (sinIng.length
+    ? sinIng.map(p=>`En <b>${esc(p.cli)}</b> (${p.desde} → ${p.hasta}) no hay facturación cargada, así que la venta es solo la baja de stock.`).join(' ') +
+      ` Los modelos cuyo stock <b>subió</b> quedan como <b>REPUESTO</b> y los que no estaban antes como <b>NUEVO</b>.`
+    : `Se cuentan las facturas y notas de crédito emitidas entre ${tr} días antes de cada foto (tránsito). ` +
+      `<b>REPUESTO</b> = el stock subió más de lo que le facturamos (compra a otro proveedor, traspaso o foto anterior incompleta). <b>NUEVO</b> = no estaba en la foto anterior y no tiene factura en el período.`);
+
+  const col = COLS.find(c=>c.k===sortK);
+  rows.sort((a,b)=>{
+    let x=col.x(a), y=col.x(b); if (sortK==='mst'){ x=a.mst; y=b.mst; }
+    const nx = x==null||x==='', ny = y==null||y==='';
+    if (nx&&ny) return 0; if (nx) return 1; if (ny) return -1;
+    return (typeof x==='string' ? x.localeCompare(y) : x-y) * sortDir;
+  });
+  $('tbl').tHead.innerHTML = '<tr>' + COLS.map(c=>`<th data-k="${c.k}" class="${c.n?'num ':''}${c.cls||''} ${c.k===sortK?(sortDir>0?'sorted-asc':'sorted-desc'):''}">${c.h}</th>`).join('') + '</tr>';
+  const totCell = c => {
+    if (c.k==='mc') return 'TOTAL'; if (!c.tot) return ''; const v=t[c.tot];
+    if (c.k==='mg') return `<span class="${v==null?'':v>=MARGEN_OK?'pos':'neg'}">${fmtP(v)}</span>`;
+    if (c.k==='rot') return `<span class="${t.rotMes==null?'':t.rotMes>=ROT_MES_OK?'pos':'neg'}">${fmtP(v)}</span>`;
+    if (c.k==='mst') return fmtM(v); if (c.k==='vn') return fmt$(v); return fmtN(v);
+  };
+  const totRow = `<tr class="tot">` + COLS.map(c=>`<td class="${c.n?'num ':''}${c.cls||''} ${c.k==='mst'&&t.mst!=null?(t.mst<=MESES_OK?'good':'bad'):''}">${totCell(c)}</td>`).join('') + '</tr>';
+  $('tbl').tBodies[0].innerHTML = totRow + rows.map(r=>'<tr>' + COLS.map(c=>`<td class="${c.n?'num ':''}${c.cls||''} ${c.cell?c.cell(r):''}">${c.td(r)}</td>`).join('') + '</tr>').join('');
+  $('cnt').textContent = `${rows.length} modelos · ${ps.length} período${ps.length>1?'s':''}`;
+  window._rows = rows; window._tot = t;
+}
+
+function renderFact(){
+  const cli = $('fCli').value, st = D.status.filter(s=>!cli || s.cli===cli);
+  const chip = c => `<span class="chip" style="background:${cliColor(c)};color:#fff">${esc(c)}</span>`;
+  if (!D.fact){ $('factInfo').textContent = 'Sube la Facturación Detallada en Cargar archivos'; $('factBody').innerHTML = st.map(s=>`<tr><td>${chip(s.cli)}</td><td colspan="9" class="dim">sin facturación cargada</td></tr>`).join(''); return; }
+  $('factInfo').textContent = `${D.fact.name} · hasta ${D.fact.hasta}`;
+  $('factBody').innerHTML = st.map(s=>`<tr><td>${chip(s.cli)}</td>
+    <td class="num">${fmtN(s.facPares)}</td><td class="num ${s.ncPares<0?'neg':''}">${fmtN(s.ncPares)}</td><td class="num" style="font-weight:800">${fmtN(s.netoPares)}</td><td class="num">${fmt$(s.neto$)}</td>
+    <td>${s.primFac||'–'}</td><td>${s.ultFac||'–'}</td><td>${s.ultFoto}</td><td class="num">${fmtN(s.stockUlt)}</td>
+    <td class="num ${s.despues>0?'pos':''}">${fmtN(s.despues)}</td></tr>`).join('');
+}
+
+function recalcular(){
+  construir();
+  opts($('fCli'), D.clientes, 'Todos los clientes');
+  fillPer();
+  opts($('fMarca'), [...new Set(D.periodos.flatMap(p=>p.rows.map(r=>r.marca)).filter(Boolean))].sort(), 'Todas');
+  render();
+}
+
+// ---------- eventos ----------
+$('tbl').tHead.addEventListener('click', e=>{
+  const th=e.target.closest('th'); if(!th) return; const c=COLS.find(c=>c.k===th.dataset.k); if(!c||c.nosort) return;
+  if (sortK===c.k) sortDir=-sortDir; else { sortK=c.k; sortDir=c.n?-1:1; } render();
+});
+$('fCli').onchange = ()=>{ fillPer(); render(); };
+['fPer','fMarca','fEst'].forEach(id=>$(id).onchange=render);
+$('fQ').oninput = render;
+$('fTr').onchange = recalcular;
+$('bReset').onclick = ()=>{ $('fCli').value=''; fillPer(); $('fPer').value='last'; $('fMarca').value=''; $('fEst').value=''; $('fQ').value=''; render(); };
+function zoom(mc){ const z=$('zoom'); z.querySelector('img').src=imgURL(mc,600); z.style.display='flex'; }
+opts($('fEst'), ['CON VENTA','AGOTADO','SIN VENTA','REPUESTO','NUEVO'], 'Todos');
+
+// ---------- Excel ----------
+async function fotoB64(mc){
+  const id=IMG[mc]; if(!id) return null;
+  try { const rs=await fetch(`https://lh3.googleusercontent.com/d/${id}=w160`); if(!rs.ok) return null; const b=await rs.blob();
+    return await new Promise(ok=>{ const fr=new FileReader(); fr.onload=()=>ok(fr.result); fr.readAsDataURL(b); }); } catch(e){ return null; }
+}
+$('bXls').onclick = async ()=>{
+  const btn=$('bXls'); btn.disabled=true; const txt=btn.textContent; btn.textContent='Generando...';
+  try {
+    const rows=window._rows, t=window._tot;
+    const wb=new ExcelJS.Workbook(), ws=wb.addWorksheet('Sell Out Regional');
+    const xc=COLS.filter(c=>c.k!=='_ph');
+    ws.columns=[{header:'FOTO',width:9}, ...xc.map(c=>({header:c.h.toUpperCase(), width:c.k==='desc'?34:c.n?13:15}))];
+    const hdr=ws.getRow(1); hdr.font={bold:true,color:{argb:'FF3D4A63'},size:10}; hdr.height=22;
+    hdr.eachCell(c=>{ c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFEEF2F8'}}; c.alignment={vertical:'middle'}; });
+    const numFmt=c=> c.fmt==='$'?'"$"#,##0' : c.fmt==='%'?'0.0%' : c.fmt==='0.0'?'0.0' : '#,##0';
+    const GOOD={argb:'FFE1F0E8'}, BAD={argb:'FFFDEAEA'};
+    const tr=ws.addRow(['', ...xc.map(c=> c.k==='mc'?'TOTAL' : c.tot ? t[c.tot] : null)]);
+    tr.font={bold:true}; tr.eachCell(c=>c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF1F4FA'}});
+    xc.forEach((c,i)=>{ if(c.n) tr.getCell(i+2).numFmt=numFmt(c); });
+    const fotos=await Promise.all(rows.map(r=>fotoB64(r.mc)));
+    rows.forEach((r,ri)=>{
+      const row=ws.addRow(['', ...xc.map(c=>{ const v=c.x(r); return v==null||v===''?null:v; })]);
+      row.height=42; row.alignment={vertical:'middle'};
+      xc.forEach((c,i)=>{
+        const cell=row.getCell(i+2); if(c.n) cell.numFmt=numFmt(c);
+        if (c.k==='mst' && r.mst!=null){ cell.fill={type:'pattern',pattern:'solid',fgColor:r.mst<=MESES_OK?GOOD:BAD}; if(!isFinite(r.mst)) cell.value='sin venta'; }
+        if (c.k==='mg' && r.mg!=null) cell.font={color:{argb:r.mg>=MARGEN_OK?'FF0E9F6E':'FFDC2626'}};
+        if (c.k==='rot' && r.rot!=null) cell.font={color:{argb:r.rot/r.per.meses>=ROT_MES_OK?'FF0E9F6E':'FFDC2626'}};
+      });
+      const f=fotos[ri];
+      if (f){ const id=wb.addImage({base64:f, extension:/png/.test(f.slice(0,30))?'png':'jpeg'}); ws.addImage(id,{tl:{col:0.1,row:ri+2+0.05},ext:{width:52,height:52}}); }
+    });
+    ws.views=[{state:'frozen',xSplit:2,ySplit:2}];
+    const buf=await wb.xlsx.writeBuffer(); const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    a.download=`Sell Out Regional ${periodosSel().map(p=>p.cli+' '+p.hasta).join(' - ')}.xlsx`; a.click();
+  } catch(e){ alert('No se pudo generar el Excel: '+e.message); }
+  btn.disabled=false; btn.textContent=txt;
+};
+
+$('foot').innerHTML = `Solo calzado · Fotos: Excel_Macro.xlsx (Google Drive) · Atributos: catálogo del Dashboard sell out<br>` +
+  `Venta UN = stock anterior + facturado en el período − stock actual · Venta $ = Vta UN × precio ÷ 1,19 · Margen = (precio ÷ 1,19 − costo) ÷ (precio ÷ 1,19), ponderado por venta neta; costo = el del archivo del cliente o nuestro precio neto facturado<br>` +
+  `Rotación = Vta UN ÷ stock inicial, verde si equivale a ${ROT_MES_OK*100}% o más al mes · Meses de stock = stock actual ÷ venta mensual, ≤${MESES_OK} en verde · Margen ≥${MARGEN_OK*100}% en verde`;
+
+cargarDatos()
+  .then(()=>{ recalcular(); if (MAN.actualizado) $('foot').innerHTML += `<br>Datos actualizados ${new Date(MAN.actualizado).toLocaleString('es-CL',{dateStyle:'short',timeStyle:'short'})}`; })
+  .catch(e=>{ $('sub').textContent=''; $('aviso').innerHTML = 'No se pudieron leer los datos publicados: '+esc(e.message); });
+</script>
+</body>
+</html>

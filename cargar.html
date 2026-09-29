@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cargar · Sell Out Regional</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --card2:#20242d; --text:#e8eaee; --muted:#9aa3ad; --line:#2a3039; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --accent2:#2d6a9f; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--text); padding:28px 16px 60px; }
+  main { max-width:980px; margin:0 auto; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .lead { color:var(--muted); margin:0 0 22px; line-height:1.5; }
+  a { color:#8ec5ff; }
+  .box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin-bottom:16px; }
+  .box h2 { font-size:1rem; margin:0 0 12px; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  input[type=password], input[type=text] { flex:1; min-width:180px; background:#0b0d11; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:9px 11px; font-size:.95rem; }
+  button { background:var(--accent2); color:#fff; border:0; border-radius:8px; padding:10px 16px; font-weight:600; cursor:pointer; font-size:.92rem; }
+  button.sec { background:var(--card2); color:var(--text); border:1px solid var(--line); }
+  button.del { background:transparent; color:var(--bad); border:1px solid var(--bad); padding:5px 10px; font-size:.8rem; }
+  button:disabled { opacity:.45; cursor:default; }
+  .drop { border:2px dashed #3a4150; border-radius:12px; padding:30px 20px; text-align:center; color:var(--muted); transition:.15s; cursor:pointer; line-height:1.6; }
+  .drop.over { border-color:var(--accent2); color:var(--text); background:#171c25; }
+  .drop b { color:var(--text); }
+  .btnfile { display:inline-block; background:var(--accent2); color:#fff; border-radius:8px; padding:10px 18px; font-weight:600; cursor:pointer; font-size:.92rem; }
+  #file { position:absolute; width:1px; height:1px; opacity:0; overflow:hidden; }
+  .card { background:var(--card2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-top:12px; }
+  .card .hd { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+  .card .name { font-weight:600; word-break:break-all; }
+  .tag { display:inline-block; font-size:.75rem; padding:3px 9px; border-radius:999px; background:#2c3340; color:var(--text); margin-left:6px; vertical-align:middle; }
+  .tag.w { background:#1f3350; color:#8ec5ff; }
+  .st { margin-top:8px; font-size:.9rem; color:var(--muted); }
+  .st.ok { color:var(--ok); } .st.bad { color:var(--bad); white-space:pre-wrap; } .st.warn { color:var(--warn); }
+  table { border-collapse:collapse; width:100%; margin-top:10px; font-size:.86rem; }
+  th, td { text-align:left; padding:5px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:500; }
+  td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .campos { display:grid; grid-template-columns:1fr 160px; gap:10px; margin-top:12px; }
+  .campos label { font-size:.78rem; color:var(--muted); display:block; margin-bottom:3px; }
+  .campos input { width:100%; }
+  .acts { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center; }
+  .small { font-size:.82rem; color:var(--muted); }
+  details summary { cursor:pointer; color:var(--muted); font-size:.86rem; }
+  ol { padding-left:20px; } li { margin:4px 0; }
+  @media (max-width:600px){ .campos { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<script src="js/acceso.js"></script>
+<main>
+  <h1>Cargar · Sell Out Regional</h1>
+  <p class="lead">Arrastra los Excel de los clientes regionales. La app reconoce el formato, lee <b>solo calzado</b>, te deja confirmar cliente y fecha, y lo sube a GitHub. El <a href="index.html">dashboard</a> recalcula la venta solo, en 1–2 minutos.<br>
+  Acepta: <b>fotos de stock</b> de cada cliente (Casa Anny, Comercial Nace, Multihogar y formatos parecidos), la <b>Facturación Detallada</b> y <b>Excel_Macro.xlsx</b> (fotos de los modelos).</p>
+
+  <div class="box">
+    <h2>1 · Conexión con GitHub</h2>
+    <div class="row">
+      <input type="password" id="token" placeholder="Token de GitHub (github_pat_…)" autocomplete="off">
+      <button id="btnToken">Guardar y probar</button>
+    </div>
+    <div class="st" id="tokenSt">Repositorio: <code id="repoName"></code></div>
+    <details style="margin-top:10px">
+      <summary>¿Cómo creo el token?</summary>
+      <ol class="small">
+        <li>Entra a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> (o edita el que ya usas en Cargas o Levantamiento)</li>
+        <li><b>Token name:</b> <code>sellout regional</code> · <b>Expiration:</b> 1 año</li>
+        <li><b>Repository access:</b> "Only select repositories" → agrega <code>sellout-regional</code></li>
+        <li><b>Permissions → Repository permissions → Contents:</b> <b>Read and write</b> (nada más)</li>
+        <li>Generate token → cópialo y pégalo arriba. Queda guardado solo en este navegador.</li>
+      </ol>
+    </details>
+  </div>
+
+  <div class="box">
+    <h2>2 · Publicado</h2>
+    <div id="estado" class="small">Cargando…</div>
+  </div>
+
+  <div class="box">
+    <h2>3 · Adjuntar archivos</h2>
+    <div class="drop" id="drop">Arrastra aquí los Excel<br>
+      <span class="small">El cliente y la fecha se toman del nombre (ej. <i>Casa Anny 08-07-2026.xlsx</i>, <i>comercial nace 11.05.26.xlsx</i>); puedes corregirlos antes de subir.<br>
+      Subir otra vez el mismo cliente y fecha reemplaza lo anterior. La facturación nueva reemplaza a la anterior (es acumulada).</span>
+      <div style="margin-top:14px"><label for="file" class="btnfile">Elegir archivos…</label></div>
+      <input type="file" id="file" accept=".xlsx,.xls" multiple>
+    </div>
+    <div id="cards"></div>
+  </div>
+</main>
+
+<datalist id="clientes"></datalist>
+<script src="js/lectores.js"></script>
+<script>
+const OWNER = 'jmunozjm93-blip', REPO = 'sellout-regional', BRANCH = 'main';
+const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
+const el = id => document.getElementById(id);
+const fmt = n => n == null ? '–' : Math.round(n).toLocaleString('es-CL');
+const fechaHora = iso => iso ? new Date(iso).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const slug = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const isoDeFecha = f => { const [d, m, y] = f.split('-'); return `${y}-${m}-${d}`; };
+const fechaDeIso = s => { const [y, m, d] = s.split('-'); return `${d}-${m}-${y}`; };
+el('repoName').textContent = `${OWNER}/${REPO}`;
+
+// ---------- GitHub ----------
+const token = () => localStorage.getItem('gh_token_sellout_regional') || '';
+el('token').value = token();
+async function gh(path, opts = {}) {
+  // cache: no-store → GitHub manda max-age=60 y el navegador devolvía listas viejas (sha desactualizado)
+  const r = await fetch(API + path, Object.assign({ cache: 'no-store', headers: { Authorization: 'Bearer ' + token(), Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } }, opts));
+  if (r.status === 404) return null;
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(`GitHub ${r.status}: ${j.message || r.statusText}`);
+  return j;
+}
+const b64 = s => { const bytes = new TextEncoder().encode(s); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+async function shaDe(path) {
+  const t = await gh(`/git/trees/${BRANCH}?recursive=1`);
+  const e = t && t.tree.find(x => x.path === path);
+  return e ? e.sha : null;
+}
+async function subir(path, texto, mensaje) {
+  let sha = await shaDe(path);
+  for (let intento = 1; ; intento++) {
+    const body = { message: mensaje, content: b64(texto), branch: BRANCH };
+    if (sha) body.sha = sha;
+    try { const r = await gh(`/contents/${path}`, { method: 'PUT', body: JSON.stringify(body) }); return r.commit; }
+    catch (e) {
+      if (intento < 5 && /GitHub (409|422)/.test(e.message)) { await new Promise(r => setTimeout(r, 800 * intento)); sha = await shaDe(path); continue; }
+      throw e;
+    }
+  }
+}
+async function borrar(path, mensaje) {
+  const sha = await shaDe(path);
+  if (!sha) return;
+  await gh(`/contents/${path}`, { method: 'DELETE', body: JSON.stringify({ message: mensaje, sha, branch: BRANCH }) });
+}
+// las subidas van de a una: dos a la vez chocan al actualizar manifiesto.json
+let colaSubida = Promise.resolve();
+const enCola = fn => { const p = colaSubida.then(fn, fn); colaSubida = p.catch(() => {}); return p; };
+
+// El manifiesto se lee por la API cuando hay token (siempre al dia) y si no, desde el sitio publicado
+async function leerManifiesto() {
+  if (token()) {
+    const r = await gh(`/contents/data/manifiesto.json?ref=${BRANCH}`);
+    if (!r) return { archivos: {} };
+    return JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(r.content.replace(/\n/g, '')), c => c.charCodeAt(0))));
+  }
+  const r = await fetch('data/manifiesto.json?t=' + Date.now(), { cache: 'no-store' });
+  return r.ok ? r.json() : { archivos: {} };
+}
+async function guardarManifiesto(m, mensaje) {
+  m.archivos = m.archivos || {};
+  m.actualizado = new Date().toISOString();
+  await subir('data/manifiesto.json', JSON.stringify(m, null, 1), mensaje);
+}
+
+el('btnToken').onclick = async () => {
+  localStorage.setItem('gh_token_sellout_regional', el('token').value.trim());
+  el('tokenSt').className = 'st'; el('tokenSt').textContent = 'Probando…';
+  try {
+    const r = await gh('');
+    if (!r) throw new Error(`No se encontró ${OWNER}/${REPO} con este token. En GitHub, en "Repository access", agrega el repositorio ${REPO}.`);
+    if (!r.permissions || !r.permissions.push) throw new Error('El token no tiene permiso de escritura (Contents: Read and write) sobre el repositorio');
+    el('tokenSt').className = 'st ok'; el('tokenSt').textContent = `✓ Conectado a ${r.full_name} con permiso de escritura`;
+    cargarEstado();
+  } catch (e) { el('tokenSt').className = 'st bad'; el('tokenSt').textContent = '✗ ' + e.message; }
+};
+
+// ---------- estado publicado ----------
+let MAN = { archivos: {} };
+async function cargarEstado() {
+  try {
+    MAN = await leerManifiesto();
+    const arch = Object.values(MAN.archivos || {}).sort((a, b) => a.cli.localeCompare(b.cli) || isoDeFecha(a.fecha).localeCompare(isoDeFecha(b.fecha)));
+    el('clientes').innerHTML = [...new Set(arch.map(a => a.cli).concat(['CASA ANNY', 'COMERCIAL NACE', 'MULTIHOGAR']))].map(c => `<option value="${esc(c)}">`).join('');
+    let h = `<table><thead><tr><th>Cliente</th><th>Fecha foto</th><th>Formato</th><th class="n">Modelos</th><th class="n">Stock calzado</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>`;
+    h += arch.length ? arch.map(a => `<tr><td><b>${esc(a.cli)}</b></td><td>${a.fecha}</td><td>${esc(a.formato)}</td><td class="n">${fmt(a.modelos)}</td><td class="n">${fmt(a.stock)}</td><td class="small">${esc(a.nombre)}</td><td class="small">${fechaHora(a.subido)}</td>
+      <td>${token() ? `<button class="del" data-id="${esc(a.id)}">Quitar</button>` : ''}</td></tr>`).join('') : '<tr><td colspan="8" class="small">Todavía no hay fotos de stock publicadas</td></tr>';
+    h += '</tbody></table>';
+    const f = MAN.facturacion, im = MAN.imagenes;
+    h += `<p class="small" style="margin-top:12px">Facturación: ${f ? `<b>${esc(f.nombre)}</b> · hasta ${f.hasta} · ${fmt(f.lineas)} líneas de calzado · ${fmt(f.pares)} pares netos · subida ${fechaHora(f.subido)}` : '<span style="color:var(--warn)">no cargada</span>'}<br>
+      Fotos de modelos: ${im ? `${fmt(im.modelos)} modelos · subidas ${fechaHora(im.subido)}` : 'no cargadas'} · Catálogo: ${MAN.catalogo ? `${fmt(MAN.catalogo.modelos)} modelos` : 'no cargado'}<br>
+      Última actualización: ${fechaHora(MAN.actualizado)}</p>`;
+    el('estado').innerHTML = h;
+    el('estado').querySelectorAll('button.del').forEach(b => b.onclick = () => quitar(b.dataset.id, b));
+  } catch (e) { el('estado').innerHTML = `<span style="color:var(--bad)">No se pudo leer lo publicado: ${esc(e.message)}</span>`; }
+}
+async function quitar(id, btn) {
+  const a = MAN.archivos[id]; if (!a) return;
+  if (!confirm(`¿Quitar la foto de stock de ${a.cli} del ${a.fecha}?`)) return;
+  btn.disabled = true; btn.textContent = 'Quitando…';
+  try {
+    await enCola(async () => {
+      const m = await leerManifiesto(); delete m.archivos[id];
+      await guardarManifiesto(m, `Quita ${a.cli} ${a.fecha}`);
+      await borrar(a.path, `Quita ${a.cli} ${a.fecha}`);
+    });
+    cargarEstado();
+  } catch (e) { alert(e.message); btn.disabled = false; btn.textContent = 'Quitar'; }
+}
+
+// ---------- archivos ----------
+const drop = el('drop');
+drop.onclick = e => { if (e.target.tagName !== 'LABEL' && e.target.id !== 'file') el('file').click(); };
+el('file').onchange = e => { procesar([...e.target.files]); e.target.value = ''; };
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => procesar([...e.dataTransfer.files]));
+
+async function procesar(files) {
+  for (const f of files) {
+    const c = document.createElement('div'); c.className = 'card';
+    c.innerHTML = `<div class="hd"><span class="name">${esc(f.name)}</span></div><div class="st">Leyendo…</div>`;
+    el('cards').prepend(c);
+    await new Promise(r => setTimeout(r, 30));
+    try {
+      if (typeof XLSX === 'undefined') throw new Error('No cargó el lector de Excel. Revisa la conexión y recarga la página.');
+      const r = Lectores.leerLibro(new Uint8Array(await f.arrayBuffer()));
+      if (r.tipo === 'stock') tarjetaStock(c, f, r);
+      else if (r.tipo === 'fact') tarjetaFact(c, f, r);
+      else if (r.tipo === 'img') tarjetaImg(c, f, r);
+      else c.querySelector('.st').outerHTML = `<div class="st bad">✗ Formato no reconocido. Si es un formato nuevo de un cliente, hay que agregarlo en js/lectores.js.</div>`;
+    } catch (e) { c.querySelector('.st').outerHTML = `<div class="st bad">✗ ${esc(e.message)}</div>`; }
+  }
+}
+const setSt = (c, cls, txt) => { const s = c.querySelector('.st'); s.className = 'st ' + cls; s.innerHTML = txt; };
+
+function tarjetaStock(c, f, r) {
+  const items = Object.values(r.items), stock = items.reduce((a, x) => a + x.st, 0);
+  const sinColor = items.filter(x => x.needColor).length;
+  const conocidos = Object.values(MAN.archivos || {}).map(a => a.cli);
+  c.innerHTML = `<div class="hd"><span class="name">${esc(f.name)}</span><span><span class="tag w">Foto de stock</span><span class="tag">${esc(r.formato)}</span></span></div>
+    <div class="small" style="margin-top:6px">Hoja <b>${esc(r.hoja)}</b> · ${fmt(items.length)} modelos-color · ${fmt(stock)} pares en stock${sinColor ? ` · ${sinColor} sin código de color (se completan con la facturación)` : ''}${items.some(x => x.vi) ? ` · venta informada ${fmt(items.reduce((a, x) => a + (x.vi || 0), 0))}` : ''}</div>
+    <div class="campos"><div><label>Cliente</label><input type="text" class="cli" list="clientes" value="${esc(Lectores.clienteDe(f.name, conocidos))}"></div>
+      <div><label>Fecha de la foto (dd-mm-aaaa)</label><input type="text" class="fec" value="${esc(Lectores.fechaDe(f.name) || '')}" placeholder="08-07-2026"></div></div>
+    <div class="acts"><button class="up">Subir a GitHub</button></div><div class="st"></div>`;
+  c.querySelector('.up').onclick = async () => {
+    const cli = c.querySelector('.cli').value.trim().toUpperCase(), fecha = c.querySelector('.fec').value.trim();
+    if (!token()) { setSt(c, 'bad', '✗ Primero guarda el token de GitHub (paso 1).'); return; }
+    if (!cli) { setSt(c, 'bad', '✗ Falta el cliente.'); return; }
+    if (!/^\d{2}-\d{2}-\d{4}$/.test(fecha)) { setSt(c, 'bad', '✗ La fecha debe ser dd-mm-aaaa.'); return; }
+    const id = `${cli}|${fecha}`, path = `data/stock/${slug(cli)}_${isoDeFecha(fecha)}.json`;
+    const btn = c.querySelector('.up'); btn.disabled = true; setSt(c, '', 'Subiendo…');
+    try {
+      await enCola(async () => {
+        const subido = new Date().toISOString();
+        await subir(path, JSON.stringify({ id, cli, fecha, nombre: f.name, formato: r.formato, subido, items: r.items }), `Stock ${cli} ${fecha} (${f.name})`);
+        const m = await leerManifiesto(); m.archivos = m.archivos || {};
+        const reemplaza = !!m.archivos[id];
+        m.archivos[id] = { id, cli, fecha, nombre: f.name, formato: r.formato, path, modelos: items.length, stock, subido };
+        await guardarManifiesto(m, `Registra stock ${cli} ${fecha}`);
+        setSt(c, 'ok', `✓ ${reemplaza ? 'Reemplazado' : 'Publicado'}: ${cli} ${fecha}. El dashboard lo muestra en 1–2 minutos.`);
+      });
+      cargarEstado();
+    } catch (e) { setSt(c, 'bad', '✗ ' + esc(e.message)); btn.disabled = false; }
+  };
+}
+
+function tarjetaFact(c, f, r) {
+  const hasta = r.rows.reduce((a, x) => x.f > a ? x.f : a, ''), desde = r.rows.reduce((a, x) => x.f < a ? x.f : a, '9');
+  const pares = r.rows.reduce((a, x) => a + x.q, 0);
+  const cards = [...new Set(r.rows.map(x => x.card))];
+  const cli = [...new Set(Object.values(MAN.archivos || {}).map(a => a.cli))];
+  const recon = cli.map(c => [c, cards.filter(k => k.includes(c) || k.includes(c.replace(/^(CENTRO COMERCIAL|COMERCIAL|DISTRIBUIDORA)\s+/, '')))]);
+  c.innerHTML = `<div class="hd"><span class="name">${esc(f.name)}</span><span class="tag w">Facturación</span></div>
+    <div class="small" style="margin-top:6px">${fmt(r.rows.length)} líneas de calzado · ${fmt(pares)} pares netos · ${fmt(cards.length)} clientes · del ${fechaDeIso(desde)} al ${fechaDeIso(hasta)}</div>
+    <div class="small" style="margin-top:6px">${recon.map(([c, k]) => `${esc(c)} → ${k.length ? esc(k.join(', ')) : '<span style="color:var(--warn)">sin facturas</span>'}`).join('<br>')}</div>
+    <div class="acts"><button class="up">Subir a GitHub</button><span class="small">Reemplaza a la facturación anterior</span></div><div class="st"></div>`;
+  c.querySelector('.up').onclick = async () => {
+    if (!token()) { setSt(c, 'bad', '✗ Primero guarda el token de GitHub (paso 1).'); return; }
+    const btn = c.querySelector('.up'); btn.disabled = true; setSt(c, '', 'Subiendo…');
+    try {
+      await enCola(async () => {
+        const subido = new Date().toISOString();
+        const rows = r.rows.map(x => [cards.indexOf(x.card), x.f, x.mc, x.q, Math.round(x.neto), x.td]);
+        await subir('data/facturacion.json', JSON.stringify({ nombre: f.name, desde: fechaDeIso(desde), hasta: fechaDeIso(hasta), subido, cards, cols: ['card', 'f', 'mc', 'q', 'neto', 'td'], rows }), `Facturación hasta ${fechaDeIso(hasta)} (${f.name})`);
+        const m = await leerManifiesto();
+        m.facturacion = { nombre: f.name, desde: fechaDeIso(desde), hasta: fechaDeIso(hasta), lineas: rows.length, pares, subido };
+        await guardarManifiesto(m, `Registra facturación hasta ${fechaDeIso(hasta)}`);
+        setSt(c, 'ok', `✓ Facturación publicada (hasta ${fechaDeIso(hasta)}).`);
+      });
+      cargarEstado();
+    } catch (e) { setSt(c, 'bad', '✗ ' + esc(e.message)); btn.disabled = false; }
+  };
+}
+
+function tarjetaImg(c, f, r) {
+  const n = Object.keys(r.map).length;
+  c.innerHTML = `<div class="hd"><span class="name">${esc(f.name)}</span><span class="tag w">Fotos de modelos</span></div>
+    <div class="small" style="margin-top:6px">${fmt(n)} modelos con foto</div>
+    <div class="acts"><button class="up">Subir a GitHub</button></div><div class="st"></div>`;
+  c.querySelector('.up').onclick = async () => {
+    if (!token()) { setSt(c, 'bad', '✗ Primero guarda el token de GitHub (paso 1).'); return; }
+    const btn = c.querySelector('.up'); btn.disabled = true; setSt(c, '', 'Subiendo…');
+    try {
+      await enCola(async () => {
+        await subir('data/imagenes.json', JSON.stringify(r.map), `Fotos de modelos (${f.name})`);
+        const m = await leerManifiesto(); m.imagenes = { modelos: n, subido: new Date().toISOString() };
+        await guardarManifiesto(m, 'Registra fotos de modelos');
+        setSt(c, 'ok', `✓ Fotos publicadas: ${fmt(n)} modelos.`);
+      });
+      cargarEstado();
+    } catch (e) { setSt(c, 'bad', '✗ ' + esc(e.message)); btn.disabled = false; }
+  };
+}
+
+cargarEstado();
+</script>
+</body>
+</html>

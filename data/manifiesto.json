@@ -1,0 +1,88 @@
+{
+ "archivos": {
+  "CASA ANNY|18-05-2026": {
+   "id": "CASA ANNY|18-05-2026",
+   "cli": "CASA ANNY",
+   "fecha": "18-05-2026",
+   "nombre": "Casa Anny Status de stock 18-05-2026.xlsx",
+   "formato": "Resumen por modelo",
+   "path": "data/stock/casa-anny_2026-05-18.json",
+   "modelos": 26,
+   "stock": 664,
+   "subido": "2026-09-29T20:47:49.254Z"
+  },
+  "CASA ANNY|08-07-2026": {
+   "id": "CASA ANNY|08-07-2026",
+   "cli": "CASA ANNY",
+   "fecha": "08-07-2026",
+   "nombre": "Casa Anny Status de stock 08-07-2026.xlsx",
+   "formato": "SAP por SKU-talla",
+   "path": "data/stock/casa-anny_2026-07-08.json",
+   "modelos": 91,
+   "stock": 1158,
+   "subido": "2026-09-29T20:47:49.254Z"
+  },
+  "COMERCIAL NACE|04-02-2026": {
+   "id": "COMERCIAL NACE|04-02-2026",
+   "cli": "COMERCIAL NACE",
+   "fecha": "04-02-2026",
+   "nombre": "comercial nace 04-02-2026.xlsx",
+   "formato": "Lista por modelo-color",
+   "path": "data/stock/comercial-nace_2026-02-04.json",
+   "modelos": 105,
+   "stock": 403,
+   "subido": "2026-09-29T20:47:49.254Z"
+  },
+  "COMERCIAL NACE|11-05-2026": {
+   "id": "COMERCIAL NACE|11-05-2026",
+   "cli": "COMERCIAL NACE",
+   "fecha": "11-05-2026",
+   "nombre": "comercial nace 11.05.26.xlsx",
+   "formato": "Detalle SKU-talla (solo calzado)",
+   "path": "data/stock/comercial-nace_2026-05-11.json",
+   "modelos": 78,
+   "stock": 788,
+   "subido": "2026-09-29T20:47:49.254Z"
+  },
+  "MULTIHOGAR|25-03-2026": {
+   "id": "MULTIHOGAR|25-03-2026",
+   "cli": "MULTIHOGAR",
+   "fecha": "25-03-2026",
+   "nombre": "MultihogaR Venta Converse  25-3-2026.xlsx",
+   "formato": "Venta y stock del cliente",
+   "path": "data/stock/multihogar_2026-03-25.json",
+   "modelos": 6,
+   "stock": 391,
+   "subido": "2026-09-29T20:47:49.254Z"
+  },
+  "MULTIHOGAR|13-09-2026": {
+   "id": "MULTIHOGAR|13-09-2026",
+   "cli": "MULTIHOGAR",
+   "fecha": "13-09-2026",
+   "nombre": "Multihogas Venta Converse al 13-09-2026.xlsx",
+   "formato": "Venta y stock del cliente",
+   "path": "data/stock/multihogar_2026-09-13.json",
+   "modelos": 16,
+   "stock": 1527,
+   "subido": "2026-09-29T20:47:49.254Z"
+  }
+ },
+ "facturacion": {
+  "nombre": "V-Facturacion Detallada (49).xlsx",
+  "desde": "26-01-2026",
+  "hasta": "29-09-2026",
+  "lineas": 5605,
+  "pares": 13389,
+  "subido": "2026-09-29T20:47:49.254Z"
+ },
+ "imagenes": {
+  "modelos": 45486,
+  "subido": "2026-09-29T20:47:49.254Z"
+ },
+ "catalogo": {
+  "modelos": 4929,
+  "subido": "2026-09-29T20:47:49.254Z",
+  "origen": "Dashboard sell out (catálogo de modelos)"
+ },
+ "actualizado": "2026-09-29T20:47:49.254Z"
+}
